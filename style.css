@@ -1,0 +1,29 @@
+
+a{
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+nav{
+    border: 0.2px solid white;
+    width: 70vw;
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 6vh;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    padding: 3px;
+    z-index: 1;
+}
+nav ion-icon{
+    font-size: 2rem;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    width: 60px;
+    border-radius: 10px;
+}
+nav ion-icon:hover{
+    background-color: white;
+    color: black;
+}

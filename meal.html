@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to HTML Table</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-image: url(https://i.pinimg.com/564x/be/6d/69/be6d6932ac19729389c5436ebae93bda.jpg);
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        main{
+            backdrop-filter: blur(4px);
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20vh;
+            border: 0.5px solid white;
+        }
+        main select{
+            margin-top: 10px;
+            background-color: transparent;
+            color: white;
+            text-align: center;
+            height: 40px;
+            width: 150px;
+        }
+        main select option{
+            background-color: black;
+            color: white;
+        }
+        main p{
+            color: white;
+            background-color: rgba(0, 0, 0, 0.242);
+            font-weight: bolder;
+            width: 60vw;
+            margin: 10px auto;
+            padding: 3px;
+            border: solid white 0.4px;
+        }
+        table {
+            color: white;
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 200px;
+        }
+
+        th, td {
+            border-bottom: 0.4px solid white;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .profile {
+            display: none;
+        }
+
+        .profile.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html"><ion-icon name="people"></ion-icon></a>
+        <a href="meal.html"><ion-icon name="calendar"></ion-icon></a>
+        <a href="adddata.html"><ion-icon name="add-circle"></ion-icon></a>
+    </nav>
+
+<main>
+
+    <div class="moredata">
+
+    </div>
+
+    <form id="profileForm">
+        <select id="uniqueProfileDropdown"></select>
+    </form>
+
+    <div id="uniqueProfiles"></div>
+
+</main>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function () {
+    function csvToProfiles(csv) {
+        var lines = csv.split('\n');
+        var profilesHTML = '';
+        var dropdownOptions = '<option value="" disabled selected>Select a person</option>'; // Added default option
+
+        var names = lines[0].split(',').slice(1, 17);
+
+        for (var i = 0; i < names.length; i++) {
+            var name = names[i].trim();
+
+            if (name !== "") {
+                dropdownOptions += '<option value="' + i + '">' + name + '</option>';
+
+                var personTableData = '<table>';
+
+                for (var j = 1; j <= 33; j++) {
+                    var rowData = lines[j].split(',');
+                    personTableData += '<tr><td>' + rowData[0].trim() + '</td><td>' + rowData[i + 1].trim() + '</td><td>' + rowData[i + 2].trim() + '</td></tr>';
+                }
+
+                personTableData += '</table>';
+
+                profilesHTML += '<div class="profile" id="uniqueProfile_' + i + '">';
+                profilesHTML += '<h2>' + name + '</h2>';
+                profilesHTML += '<div>' + personTableData + '</div>';
+                profilesHTML += '</div>';
+            }
+        }
+
+        var moreDataHTML = '<p>Total Meal: ' + lines[34].split(',')[17].trim() + '</p>';
+        moreDataHTML += '<p>Total Spend: ' + lines[35].split(',')[17].trim() + '</p>';
+        moreDataHTML += '<p>Total Get: ' + lines[36].split(',')[17].trim() + '</p>';
+        document.querySelector('.moredata').innerHTML = moreDataHTML;
+
+        document.getElementById('uniqueProfileDropdown').innerHTML = dropdownOptions;
+
+        return profilesHTML;
+    }
+
+    function fetchCSV(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(xhr.responseText);
+            }
+        };
+        xhr.open('GET', url, true);
+        xhr.send();
+    }
+
+    function displayGoogleSheetsProfiles() {
+        var googleSheetsLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnio7HFTTnP6tQh5DBQOpiKCcGQ9oZJ4goQMnHiHa9A_MwCEQrIWIbp51PW6yWg_XmchzsksZzwKme/pub?output=csv';
+
+        fetchCSV(googleSheetsLink, function (csvData) {
+            var profilesHTML = csvToProfiles(csvData);
+            document.getElementById('uniqueProfiles').innerHTML = profilesHTML;
+
+            // Attach event listener to the dropdown
+            var dropdown = document.getElementById('uniqueProfileDropdown');
+            dropdown.addEventListener('change', function () {
+                displaySelectedProfile(this.value);
+            });
+        });
+    }
+
+    function displaySelectedProfile(index) {
+        var allProfiles = document.querySelectorAll('.profile');
+
+        allProfiles.forEach(function (profile) {
+            profile.classList.remove('active');
+        });
+
+        var selectedProfile = document.getElementById('uniqueProfile_' + index);
+        selectedProfile.classList.add('active');
+    }
+
+    displayGoogleSheetsProfiles();
+});
+
+    </script>
+
+</body>
+
+</html>

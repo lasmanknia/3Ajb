@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to HTML Table</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin-bottom: 20vh;
+            background-size: cover;
+            background-image: url(https://i.pinimg.com/564x/be/6d/69/be6d6932ac19729389c5436ebae93bda.jpg);
+            z-index: 1;
+            text-align: center;
+
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+        }
+
+        #profiles {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .profile {
+            margin: 5px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            width: 35vw;
+            backdrop-filter: blur(3px);
+        }
+
+        .profile input {
+            background-color: transparent;
+            border: none;
+            border: solid 0.5px white;
+            color: white;
+            margin: 2px;
+            outline: none;
+            margin-top: 5px;
+            width: 10vw;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 5px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .input-box {
+            color: white;
+            text-align: center;
+            margin: 3px;
+            width: 15vw;
+        }
+
+        .submit-btn {
+            margin-top: 10px;
+            color: white;
+            border: solid 2px white;
+            background-color: transparent;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: white;
+            color: black;
+        }
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 2;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <nav>
+        <a href="index.html"><ion-icon name="people"></ion-icon></a>
+        <a href="meal.html"><ion-icon name="calendar"></ion-icon></a>
+        <a href=""><ion-icon name="add-circle"></ion-icon></a>
+    </nav>
+
+    <h1>Daily Meal Update</h1>
+
+    <div id="profiles"></div>
+
+    <button class="submit-btn" onclick="submitData()">Submit</button>
+
+    <div id="loading">
+        Loading...
+    </div>
+
+    <div id="popup">
+        <p>Meal Update successfully!</p>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to convert CSV to HTML profiles with input boxes
+            function csvToProfilesWithInputBoxes(csv) {
+                var lines = csv.split('\n');
+                var profilesHTML = '';
+
+                // Extract names from the first row
+                var names = lines[0].split(',').slice(1, 17); // Skip the first column and go up to Q column (index 17)
+
+                // Create profiles for each person with names and input boxes
+                for (var i = 0; i < names.length; i++) {
+                    var name = names[i].trim();
+
+                    // Skip the profile if the name is empty
+                    if (name === "") {
+                        continue;
+                    }
+
+                    profilesHTML += '<div class="profile">';
+                    profilesHTML += '<h2>' + name + '</h2>';
+                    profilesHTML += '<div class="input-box">';
+                    profilesHTML += '<label for="morningInput' + i + '">Morning<br></label>';
+                    profilesHTML += '<input type="text" id="morningInput' + i + '" value="1">';
+                    profilesHTML += '</div>';
+                    profilesHTML += '<div class="input-box">';
+                    profilesHTML += '<label for="nightInput' + i + '">Night<br></label>';
+                    profilesHTML += '<input type="text" id="nightInput' + i + '" value="1">';
+                    profilesHTML += '</div>';
+                    profilesHTML += '</div>';
+                }
+
+                return profilesHTML;
+            }
+
+            // Function to fetch CSV data from the provided Google Sheets link
+            function fetchCSV(url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        callback(xhr.responseText);
+                    }
+                };
+                xhr.open('GET', url, true);
+                xhr.send();
+            }
+
+            // Function to display profiles with input boxes from the provided Google Sheets link
+            function displayGoogleSheetsProfilesWithInputBoxes() {
+                var googleSheetsLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnio7HFTTnP6tQh5DBQOpiKCcGQ9oZJ4goQMnHiHa9A_MwCEQrIWIbp51PW6yWg_XmchzsksZzwKme/pub?output=csv';
+
+                fetchCSV(googleSheetsLink, function (csvData) {
+                    var profilesHTML = csvToProfilesWithInputBoxes(csvData);
+                    document.getElementById('profiles').innerHTML = profilesHTML;
+                });
+            }
+
+            // Call the displayGoogleSheetsProfilesWithInputBoxes function
+            displayGoogleSheetsProfilesWithInputBoxes();
+
+            // Function to handle the submit button click
+            window.submitData = function () {
+                document.getElementById('loading').style.display = 'flex';
+
+                // Extract data from input boxes and prepare the payload
+                var data = [];
+                var profiles = document.querySelectorAll('.profile');
+                profiles.forEach(function (profile, index) {
+                    var morning = profile.querySelector('input[id^="morningInput"]').value;
+                    var night = profile.querySelector('input[id^="nightInput"]').value;
+                    data.push(morning + ',' + night);
+                });
+
+                // Send data using a POST request to the Google Apps Script web app
+                fetch('https://script.google.com/macros/s/AKfycbyWFy_Z9hmS8dOW5QNrXBTrdQo60_yUfV9yOW-PoEI5ngN2OudVQHwy8uynPcIve0FsUw/exec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'data=' + data.join(';'), // Use ';' as a separator for morning and night values
+                })
+                    .then(() => {
+                        // Hide loading scene
+                        document.getElementById('loading').style.display = 'none';
+
+                        // Show success popup
+                        document.getElementById('popup').style.display = 'block';
+
+                        // Hide success popup after 3 seconds (adjust as needed)
+                        setTimeout(function () {
+                            document.getElementById('popup').style.display = 'none';
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        // Hide loading scene in case of an error
+                        document.getElementById('loading').style.display = 'none';
+                        alert('Error: ' + error);
+                    });
+            };
+        });
+    </script>
+
+</body>
+
+</html>
