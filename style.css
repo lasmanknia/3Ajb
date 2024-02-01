@@ -1,5 +1,14 @@
-
-a{
+body {
+    background-image: url(https://i.pinimg.com/564x/bc/4d/86/bc4d86d78f407cab596f599e52c2011c.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+}
+*{
+    
+    margin: 0;
+    padding: 0;
+    
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 nav{
@@ -9,6 +18,8 @@ nav{
     justify-content: space-around;
     position: fixed;
     bottom: 6vh;
+    backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.265);
     left: 50%;
     transform: translateX(-50%);
     border-radius: 10px;
