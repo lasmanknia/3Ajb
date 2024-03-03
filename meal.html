@@ -11,46 +11,58 @@
             backdrop-filter: blur(4px);
             padding: 10px;
             text-align: center;
-            color: white;
             margin-bottom: 20vh;
-            border: 0.5px solid white;
+            border-bottom: 0.5px solid rgb(220, 210, 210);
         }
         main select{
             margin-top: 10px;
             background-color: transparent;
             text-align: center;
             height: 40px;
-            color: white;
             width: 150px;
+            color: white;
+            outline: none;
         }
-        main select option{
+        main option{
             background-color: black;
         }
-        main p{
-            background-color: rgba(255, 255, 255, 0.265);
-            backdrop-filter: blur(10px);
-            color: white;
-            font-weight: bolder;
-            width: 60vw;
-            margin: 10px auto;
-            padding: 3px;
-            border: solid white 0.4px;
+        .data{
+            display: flex;
+            margin: 20px;
+            justify-content: space-around;
+        }
+        .data p{
+            font-family: 'font1';
+            font-size: 1rem;
+            width: 20vw;
+            padding: 5px;
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            line-height: 1.3rem;
+        }
+        .data p:nth-child(2){
+            border-radius: 0px;
+            border-left: solid 1px white;
+            border-right: solid 1px white;
+        }
+        .data p:nth-child(3){
+            border-radius: 0px;
+            border-right: solid 1px white;
         }
         table {
             margin: 0 auto;
             border-collapse: collapse;
             width: 200px;
         }
-
+        h2{
+            margin-top: 10px;
+        }
         th, td {
-            border-bottom: 0.4px solid white;
+            border-bottom: 0.4px solid rgb(255, 250, 250);
             padding: 8px;
             text-align: center;
         }
 
-        th {
-            background-color: #f2f2f2;
-        }
 
         .profile {
             display: none;
@@ -67,7 +79,7 @@
     <nav>
         <a href="index.html"><ion-icon name="people"></ion-icon></a>
         <a href="meal.html"><ion-icon name="calendar"></ion-icon></a>
-        <a href="adddata.html"><ion-icon name="add-circle"></ion-icon></a>
+        <a href="add.html"><ion-icon name="add-circle"></ion-icon></a>
     </nav>
 
 <main>
@@ -119,10 +131,24 @@
             }
         }
 
-        var moreDataHTML = '<p>Total Meal: ' + lines[34].split(',')[17].trim() + '</p>';
-        moreDataHTML += '<p>Total Spend: ' + lines[35].split(',')[17].trim() + '</p>';
-        moreDataHTML += '<p>Total Get: ' + lines[36].split(',')[17].trim() + '</p>';
+        // Extracting data from lines array
+        var totalMeal = lines[34].split(',')[17].trim();
+        var totalSpend = lines[35].split(',')[17].trim();
+        var totalGet = lines[36].split(',')[17].trim();
+        var saving = lines[37].split(',')[17].trim();
+
+
+        // Constructing HTML using variables
+        var moreDataHTML = '<div class="data">';
+        moreDataHTML += '<p>মিল<br>' + totalMeal + ' টা</p>';
+        moreDataHTML += '<p>মোট<br>' + totalGet + ' ৳</p>';
+        moreDataHTML += '<p>খরচ<br>' + totalSpend + ' ৳</p>';
+        moreDataHTML += '<p>অবশিষ্ট<br>' + saving + ' ৳</p>';
+        moreDataHTML += '</div>';
+
+        // Setting inner HTML of the element with class 'moredata'
         document.querySelector('.moredata').innerHTML = moreDataHTML;
+
 
         document.getElementById('uniqueProfileDropdown').innerHTML = dropdownOptions;
 
@@ -141,7 +167,7 @@
     }
 
     function displayGoogleSheetsProfiles() {
-        var googleSheetsLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnio7HFTTnP6tQh5DBQOpiKCcGQ9oZJ4goQMnHiHa9A_MwCEQrIWIbp51PW6yWg_XmchzsksZzwKme/pub?output=csv';
+        var googleSheetsLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBaSONOR96SzuOx5gzkBSQbl4jcFVcr7QCJa7mz7BTvMe90Rkr78eAU4eE5-NibBftx5iVdBU-Dr8H/pub?output=csv';
 
         fetchCSV(googleSheetsLink, function (csvData) {
             var profilesHTML = csvToProfiles(csvData);
